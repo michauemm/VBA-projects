@@ -1,0 +1,49 @@
+Option Explicit
+
+Function BSM_call(S As Double, K As Double, r As Double, vol As Double, T As Double)
+'S - cena instrumentu bazowego
+'K - cena wykonania opcji
+'r - stopa wolna od ryzyka
+'vol - współczynnik zmienności (volatility)
+'T - czas do wygaśnięcia
+
+Dim d1 As Double, d2 As Double
+Dim Nd1 As Double, Nd2 As Double
+
+d1 = (Log(S / K) + (r + 0.5 * vol ^ 2) * T) / (vol * Sqr(T))
+d2 = d1 - vol * Sqr(T)
+
+Nd1 = WorksheetFunction.Norm_S_Dist(d1, 1)
+Nd2 = WorksheetFunction.Norm_S_Dist(d2, 1)
+
+BSM_call = S * Nd1 - K * Exp(-r * T) * Nd2
+End Function
+
+Function BSM_put(S As Double, K As Double, r As Double, vol As Double, T As Double)
+'S - cena instrumentu bazowego
+'K - cena wykonania opcji
+'r - stopa wolna od ryzyka
+'vol - współczynnik zmienności (volatility)
+'T - czas do wygaśnięcia
+
+Dim d1 As Double, d2 As Double
+Dim Nd1 As Double, Nd2 As Double
+
+d1 = (Log(S / K) + (r + 0.5 * vol ^ 2) * T) / (vol * Sqr(T))
+d2 = d1 - vol * Sqr(T)
+
+Nd1 = WorksheetFunction.Norm_S_Dist(d1, 1)
+Nd2 = WorksheetFunction.Norm_S_Dist(d2, 1)
+
+BSM_put = K * Exp(-r * T) * (1 - Nd2) - S * (1 - Nd1)
+End Function
+
+Function wycena_opcji_BSM(S As Double, K As Double, r As Double, vol As Double, T As Double)
+ Dim tabl(0 To 1, 0 To 1)
+  tabl(0, 0) = "call"
+  tabl(1, 0) = "put"
+  tabl(0, 1) = BSM_call(S, K, r, vol, T)
+  tabl(1, 1) = BSM_put(S, K, r, vol, T)
+ wycena_opcji_BSM = tabl()
+End Function
+
